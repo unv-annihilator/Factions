@@ -5,7 +5,10 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+
 import com.google.gson.Gson;
+import com.massivecraft.factions.Faction;
 import com.massivecraft.factions.zcore.util.DiscUtil;
 import com.massivecraft.factions.zcore.util.TextUtil;
 
@@ -202,6 +205,18 @@ public abstract class EntityCollection<E extends Entity>
 		return true;
 	}
 	
+	public boolean loadFromSql()
+	{
+		Map<String, E> id2entity = this.loadCoreSql();
+		if(id2entity == null) return false;
+		this.entities.clear();
+		this.entities.addAll(id2entity.values());
+		this.id2entity.clear();
+		this.id2entity.putAll(id2entity);
+		this.fillIds();
+		return true;
+	}
+	
 	private Map<String, E> loadCore()
 	{
 		if ( ! this.file.exists())
@@ -217,6 +232,16 @@ public abstract class EntityCollection<E extends Entity>
 		
 		Type type = this.getMapType();
 		return this.gson.fromJson(content, type);
+	}
+	
+	private Map<String, E> loadCoreSql()
+	{
+		// Check for SQL table
+//		if( ! this.)
+		// if no table, create new table and return empty hash
+//		return new HashMap<String, E>();
+		
+		return null;
 	}
 	
 	// -------------------------------------------- //
@@ -249,6 +274,7 @@ public abstract class EntityCollection<E extends Entity>
 			String id = entry.getKey();
 			E entity = entry.getValue();
 			entity.id = id;
+			
 			this.updateNextIdForId(id);
 		}
 	}
